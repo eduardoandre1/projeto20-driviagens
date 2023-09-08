@@ -5,5 +5,5 @@ export async function createpassenger(req, res)
 {
 		const {firstName,lastName } = req.body;
 		passengersRepository.create(firstName, lastName)
-		return res.status(httpStatus.CREATED).send('success')
+		res.status(httpStatus.CREATED).send('success')
 }

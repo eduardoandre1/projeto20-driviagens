@@ -1,8 +1,8 @@
 import cors from 'cors'
 import express, { json } from 'express'
+import 'express-async-errors'
 import router from './routes/router.js'
 import DB from './database/pg.js'
-import 'express-async-errors'
 import errorHandler from './middlewares/erros.pach.js'
 
 const app = express()
