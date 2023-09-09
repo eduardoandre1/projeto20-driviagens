@@ -4,7 +4,11 @@ async function create(firstName,lastName)
 {
 	await DB.query(`INSERT INTO passengers ("firstName","lastName") VALUES ($1,$2)`,[firstName,lastName]);
 }
-
-const passengersRepository = {create}
+async function readFilter(id)
+{
+	const passengerId = await DB.query(`SELECT * FROM passengers WHERE id = $1`,[id]);
+	return passengerId
+}
+const passengersRepository = {create,readFilter}
 
 export default passengersRepository
