@@ -21,3 +21,23 @@ export async function flightCreateService(origin, destination, data)
 	// send the flights to the database 
 	await flightRepository.create(origin, destination, data)
 }
+
+export async function flightReadService(origin, destination)
+{
+	let flightsList
+	if(destination !== undefined && origin === undefined) 
+	{
+		const id = await citiesRepository.readFilterName(destination)
+		flightsList = await flightRepository.readFilterDestination(id.rows[0].id)
+	}
+	if(destination === undefined && origin !== undefined) 
+	{
+		const id = await citiesRepository.readFilterName(origin)
+		flightsList = await flightRepository.readFilterOrigin(id.rows[0].id)
+	}
+	if(destination === undefined && origin === undefined)
+	{
+		flightsList = await flightRepository.read()
+	}
+	return flightsList.rows
+}
