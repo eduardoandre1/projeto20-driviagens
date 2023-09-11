@@ -4,6 +4,6 @@ import input_validate from "../middlewares/inputValidation.midllewares.js";
 import flightSchema from "../schemas/flights.schema.js";
 const flights = Router()
 flights.get("/flights",sendFlight)
-flights.post("/flights",createFlight)
+flights.post("/flights",input_validate(flightSchema),createFlight)
 
 export default flights
