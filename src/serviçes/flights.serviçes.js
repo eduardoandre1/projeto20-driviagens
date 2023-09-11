@@ -26,7 +26,7 @@ export async function flightCreateService(origin, destination, data)
 	await flightRepository.create(origin, destination, dateDatabase)
 }
 
-export async function flightReadService(origin, destination)
+export async function flightReadService(origin, destination,lowerDate,upperDate)
 {
 	let flightsList
 	if(destination !== undefined && origin === undefined) 
@@ -42,6 +42,14 @@ export async function flightReadService(origin, destination)
 	if(destination === undefined && origin === undefined)
 	{
 		flightsList = await flightRepository.read()
+	}
+	if(lowerDate !== undefined && upperDate !== undefined)
+	{
+		const lower = dayjs(lowerDate, 'DD-MM-YYYY')
+		const upper = dayjs(upperDate, 'DD-MM-YYYY')
+		const originId = origin===undefined?0: (await citiesRepository.readFilterName(origin)).rows[0].id
+		const destinationId =destination===undefined?0:(await citiesRepository.readFilterName(destination)).rows[0].id
+		flightsList = await flightRepository.readFilterLocalAndDate(destinationId,originId.id,lower,upper)
 	}
 	return flightsList.rows
 }

@@ -10,7 +10,9 @@ export async function createFlight(req, res) {
 export async function sendFlight(req, res) 
 {
 	const {origin,destination} = req.query;
-	console.log(origin,destination)
-	const flight = await flightReadService(origin,destination)
+	const lowerDate = req.query['smaller-date']
+	const upperDate = req.query['bigger-date']
+	console.log(origin,destination,)
+	const flight = await flightReadService(origin,destination,lowerDate,upperDate)
 	res.status(httpStatus.OK).send(flight)
 }
