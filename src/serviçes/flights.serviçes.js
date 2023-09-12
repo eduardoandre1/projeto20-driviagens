@@ -51,5 +51,25 @@ export async function flightReadService(origin, destination,lowerDate,upperDate)
 		const destinationId =destination===undefined?0:(await citiesRepository.readFilterName(destination)).rows[0].id
 		flightsList = await flightRepository.readFilterLocalAndDate(destinationId,originId.id,lower,upper)
 	}
+	if(origin === undefined && upperDate && lowerDate && destination)
+	{
+		const lower = dayjs(lowerDate, 'DD-MM-YYYY')
+		const upper = dayjs(upperDate, 'DD-MM-YYYY')
+		const destinationId =destination===undefined?0:(await citiesRepository.readFilterName(destination)).rows[0].id
+		flightsList = await flightRepository.readFilterHalfLocaAndDate(origin,destinationId,lower,upper) 
+	}
+	if(origin !== undefined && upperDate && lowerDate && destination === undefined)
+	{
+		const lower = dayjs(lowerDate, 'DD-MM-YYYY')
+		const upper = dayjs(upperDate, 'DD-MM-YYYY')
+		const originId = origin===undefined?0: (await citiesRepository.readFilterName(origin)).rows[0].id
+		flightsList = await flightRepository.readFilterHalfLocaAndDate(originId,destination,lower,upper)
+	}
+	if(!origin && !destination && lowerDate && upperDate)
+	{
+		const lower = dayjs(lowerDate, 'DD-MM-YYYY')
+		const upper = dayjs(upperDate, 'DD-MM-YYYY')
+		flightsList = await flightRepository.readFilterDate(lower,upper)
+	}
 	return flightsList.rows
 }

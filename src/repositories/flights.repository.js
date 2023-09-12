@@ -31,9 +31,36 @@ async function readFilterId(id)
 async function readFilterLocalAndDate(origin, destination,lowerDate, upperDate)
 {
 	const lower = dayjs(lowerDate).format('YYYY-MM-DD')
+	const upper = dayjs(upperDate).format('YYYY-MM-DD')
 	const flights = await DB.query(`SELECT flights.date as date ,c2.name as destination, c1.name as origin from flights inner join  cities as c1  ON flights.origin = c1.id inner join cities as c2 ON flights.destination = c2.id  
-	WHERE destination = $1 OR origin = $2 OR date >= $3 AND date <= $4  ORDER by date DESC`,[destination,origin,lower,upperDate]); 
+	WHERE destination = $1 AND  origin = $2 AND date >= $3 AND date <= $4  ORDER by date DESC`,[destination,origin,lower,upper]); 
 	return flights
+}
+async function readFilterDate(lowerDate,upperDate)
+{
+	const lower = dayjs(lowerDate).format('YYYY-MM-DD')
+	const upper = dayjs(upperDate).format('YYYY-MM-DD')
+	const flights = await DB.query(`SELECT flights.date as date ,c2.name as destination, c1.name as origin from flights inner join  cities as c1  ON flights.origin = c1.id inner join cities as c2 ON flights.destination = c2.id  
+	WHERE date >= $1 AND date <= $2  ORDER by date DESC`,[lower,upper]); 
+	return flights
+}
+async function readFilterHalfLocaAndDate(origin, destination,lowerDate, upperDate)
+{
+	const lower = dayjs(lowerDate).format('YYYY-MM-DD')
+	const upper =  dayjs(upperDate).format('YYYY-MM-DD')
+	let flight 
+	if(!origin)
+	{
+		flight = await DB.query(`SELECT flights.date as date ,c2.name as destination, c1.name as origin from flights inner join  cities as c1  ON flights.origin = c1.id inner join cities as c2 ON flights.destination = c2.id  
+		WHERE destination = $1 AND date >= $2 AND date <= $3  ORDER by date DESC`,[destination,lower,upper]); 
+		return flights
+	}
+	if(!destination)
+	{
+		flight = await DB.query(`SELECT flights.date as date ,c2.name as destination, c1.name as origin from flights inner join  cities as c1  ON flights.origin = c1.id inner join cities as c2 ON flights.destination = c2.id  
+		WHERE destination = $1 AND date >= $2 AND date <= $3  ORDER by date DESC`,[destination,lower,upper]); 
+		return flights
+	}
 }
 const flightRepository = 
 {
@@ -42,6 +69,8 @@ const flightRepository =
 	readFilterOrigin,
 	readFilterDestination,
 	readFilterId,
-	readFilterLocalAndDate
+	readFilterLocalAndDate,
+	readFilterHalfLocaAndDate,
+	readFilterDate
 }
 export default flightRepository
